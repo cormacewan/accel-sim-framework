@@ -1,5 +1,17 @@
 # Basefile Configs
 
+# New Custom Jetson Nano configs
+JETSONNANO_L2ON:
+    base_file: "$GPGPUSIM_ROOT/configs/custom-cfgs/SM53_JETSON_NANO/gpgpusim.config"
+
+JETSONNANO_L2OFF:
+    base_file: "$GPGPUSIM_ROOT/configs/custom-cfgs/SM53_JETSON_NANO_NO_L2/gpgpusim.config"
+
+# TitanX with only L2 turned off
+TITANX_L2OFF:
+    base_file: "$GPGPUSIM_ROOT/configs/custom-cfgs/SM6_TITANX_NO_L2/gpgpusim.config"
+
+
 # Pascal
 TITANX:
     base_file: "$GPGPUSIM_ROOT/configs/tested-cfgs/SM6_TITANX/gpgpusim.config"
@@ -195,3 +207,12 @@ Accelwattch_PTX_SIM:
     extra_params: "-power_simulation_enabled 1
     \n-power_simulation_mode 0
     \n-accelwattch_xml_file accelwattch_ptx_sim.xml"
+
+L2ON:
+    extra_params: "# Use normal L2 cache"
+
+L2OFF:
+    extra_params: "-gpgpu_cache:dl2 none"
+
+L2FORCEMISS:
+    extra_params: "-gpgpu_cache:dl2_force_miss 1"
