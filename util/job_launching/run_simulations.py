@@ -628,20 +628,47 @@ class ConfigurationSpec:
             config_text += "\n" + "-hw_perf_bench_name " + bench_name + "\n"
 
         if options.trace_dir != "":
-            cfgsubdir = re.sub(r".*(configs.*)gpgpusim.config", r"\1", config_text_file)
+            cfgsubdir = re.sub(r".*(configs.*)gpgpusim.config",r"\1",config_text_file)
             config_text += "\n" + "# Accel-Sim Parameters" + "\n"
-            accelsim_cfg = os.path.expandvars(
-                os.path.join("$ACCELSIM_ROOT", cfgsubdir, "trace.config")
-            )
+            accelsim_cfg = os.path.expandvars(os.path.join("$ACCELSIM_ROOT", cfgsubdir, "trace.config"))
             config_text += open(accelsim_cfg).read()
+        # ---------------------------------------------
+        # Random power failure configuration
+        # ---------------------------------------------
 
-        open(os.path.join(this_run_dir, "gpgpusim.config"), "w").write(config_text)
+        # Remove previous definitions so the command-line
+        # options take precedence over base/sweep configs.
+        power_keys = ("-power_failure_enabled","-power_failure_mtbf","-power_failure_seed",)
+
+        config_text = "\n".join(
+            line for line in config_text.splitlines()
+            if not (line.strip().split() and line.strip().split()[0] in power_keys)
+        )
+
+        config_text += "\n\n# Random Power Failures\n"
+        config_text += ( "-power_failure_enabled {0}\n".format(1 if options.power_enabled else 0))
+        config_text += ("-power_failure_mtbf {0}\n".format(options.power_mtbf))
+        config_text += ("-power_failure_seed {0}\n".format(options.power_seed))
+
+        # Write final configuration
+        open(os.path.join(this_run_dir, "gpgpusim.config"),"w").write(config_text)
 
 
 # -----------------------------------------------------------
 # main script start
 # -----------------------------------------------------------
 (options, args) = common.parse_run_simulations_options()
+
+if options.power_enabled:
+    if not 1 <= options.power_mtbf <= 4294967295:
+        sys.exit(
+            "ERROR: -MTBF must be between 1 and 4294967295"
+        )
+
+    if not 0 <= options.power_seed <= 4294967295:
+        sys.exit(
+            "ERROR: -POWER_SEED must be a 32-bit unsigned integer"
+        )
 
 if str(os.getenv("GPGPUSIM_SETUP_ENVIRONMENT_WAS_RUN")) != "1":
     sys.exit("ERROR - Please run setup_environment before running this script")

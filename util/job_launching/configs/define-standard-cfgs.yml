@@ -208,11 +208,6 @@ Accelwattch_PTX_SIM:
     \n-power_simulation_mode 0
     \n-accelwattch_xml_file accelwattch_ptx_sim.xml"
 
-L2ON:
-    extra_params: "# Use normal L2 cache"
-
-L2OFF:
-    extra_params: "-gpgpu_cache:dl2 none"
 
 L2FORCEMISS:
     extra_params: "-gpgpu_cache:dl2_force_miss 1"

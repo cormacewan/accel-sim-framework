@@ -373,6 +373,32 @@ def parse_run_simulations_options():
         help="Path to heaptrack binary or AppImage (default: 'heaptrack' from PATH). "
         "Use this on systems where heaptrack is installed as an AppImage.",
     )
+    # --------------------------------------
+    # Extra power failure configuration
+    parser.add_option(
+        "--POWER",
+        action="store_true",
+        dest="power_enabled",
+        default=False,
+        help="Enable random GPU power failures"
+    )
+
+    parser.add_option(
+        "--MTBF",
+        type="int",
+        dest="power_mtbf",
+        default=1000000,
+        help="Mean simulation steps between failures"
+    )
+
+    parser.add_option(
+        "--POWER_SEED",
+        type="int",
+        dest="power_seed",
+        default=42,
+        help="Random seed for power failures"
+    )
+    #---------------------------------------
 
     (options, args) = parser.parse_args()
     # Parser seems to leave some whitespace on the options, getting rid of it
